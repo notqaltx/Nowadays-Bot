@@ -28,13 +28,41 @@ client.on('ready', () => {
 
 client.on('messageCreate', (message) => {
     log(`New message from ${message.author.tag}: ${message.content}`);
+    const messageContent = message.content.toLowerCase();
 
     for (const word of bannedWords) {
-        if (message.content.toLowerCase().includes(word)) {
-            message.delete();
-            message.author.send(`Your message was deleted for containing the banned word "${word}".`);
-            log(`Deleted message from ${message.author.tag} for containing "${word}".`);
-            break;
+        const escapedWord = word.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        const regex = new RegExp(escapedWord.replace(/[aeiou]/gi, "[aeiou0-9@]"), "gi");
+        if (regex.test(messageContent)) {
+              const originalMessageContent = message.content;
+              message.delete();
+      
+              const serverName = message.guild.name; 
+              const currentTime = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+      
+              const reportMessageEmbed = new Discord.EmbedBuilder()
+                  .setColor('#FF0000')
+                  .setTitle('New Report!')
+                  .setDescription(`${message.author.tag} has been reported for using a banned word.`)
+                  .addFields(
+                      { name: 'Reported User', value: message.author.tag, inline: true },
+                      { name: 'Reason', value: 'Banned Word Usage', inline: true },
+                      { name: 'Server', value: serverName, inline: true },
+                      { name: 'Time (EST)', value: currentTime, inline: true },
+                      { name: 'Original Message', value: originalMessageContent }
+                  )
+                  .setTimestamp();
+
+              const reportChannel = client.channels.cache.get('1040682768549564480');
+              if (reportChannel) {
+                  reportChannel.send({ embeds: [reportMessageEmbed] });
+              }
+              const userWarningEmbed = new Discord.EmbedBuilder()
+                 .setColor('#FFD700')
+                 .setTitle('Warning')
+                 .setDescription(`Your message in **${serverName}** was deleted for containing a variation of the banned word "${word}". Please review the server rules and avoid using inappropriate language.`)
+                 .setTimestamp();
+             message.author.send({ embeds: [userWarningEmbed] });
         }
     }
 });
