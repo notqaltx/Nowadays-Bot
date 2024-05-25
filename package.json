@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "echo \"Loading bot...\" && node index.js",
     "deploy": "node deploy.js",
-    "start-deploy": "node deploy.js && node index.js",
+    "start-deploy": "npm run deploy && npm run start",
     "delete-cmds": "echo \"WARNING: Please make sure to deploy it.\" node ./utils/delete.js"
   },
   "keywords": [],
