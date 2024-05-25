@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,7 +10,7 @@ module.exports = {
         const target = interaction.options.getMember('target');
         const reason = interaction.options.getString('reason') || 'No reason provided';
 
-        if (!interaction.member.permissions.has(Discord.PermissionFlagsBits.KickMembers)) {
+        if (!interaction.member.permissions.has(PermissionFlagsBits.KickMembers)) {
             return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true });
         }
         if (!target.kickable) {

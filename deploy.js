@@ -2,7 +2,6 @@ const { REST, Routes } = require('discord.js');
 const { token, clientId, guildId } = require('./configs/bot.json');
 const log = require('./utils/logger');
 const fs = require('node:fs');
-const path = require('node:path');
 
 const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
