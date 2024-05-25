@@ -22,13 +22,23 @@ try {
     log(`Error reading banned_words.json: ${err.message}`);
 }
 
+const activities = [
+ { name: '🛡️ Protecting the server', type: Discord.ActivityType.Custom },
+ { name: '🧹 Cleaning up chats', type: Discord.ActivityType.Custom },
+ { name: '💬 Helping users', type: Discord.ActivityType.Custom },
+];
+let currentActivityIndex = 0;
+function updateActivity() {
+   client.user.setPresence({
+       activities: [activities[currentActivityIndex]],
+       status: 'idle',
+   });
+   currentActivityIndex = (currentActivityIndex + 1) % activities.length;
+}
 client.on('ready', () => {
     log(`Logged in as ${client.user.tag}!`);
-    client.user.setStatus('idle');
-    client.user.setPresence({
-       activities: [{ name: 'over the server', type: Discord.ActivityType.Watching }],
-       status: 'idle'
-    });
+    updateActivity();
+    setInterval(updateActivity, 30 * 1000);
 });
 
 client.on('messageCreate', (message) => {
