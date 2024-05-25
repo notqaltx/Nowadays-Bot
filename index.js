@@ -24,6 +24,11 @@ try {
 
 client.on('ready', () => {
     log(`Logged in as ${client.user.tag}!`);
+    client.user.setStatus('idle');
+    client.user.setPresence({
+       activities: [{ name: 'over the server', type: Discord.ActivityType.Watching }],
+       status: 'idle'
+    });
 });
 
 client.on('messageCreate', (message) => {
@@ -53,7 +58,7 @@ client.on('messageCreate', (message) => {
                   )
                   .setTimestamp();
 
-              const reportChannel = client.channels.cache.get('1040682768549564480');
+              const reportChannel = client.channels.cache.get(bot_config.reports_channel_id);
               if (reportChannel) {
                   reportChannel.send({ embeds: [reportMessageEmbed] });
               }

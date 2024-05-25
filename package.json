@@ -1,7 +1,7 @@
 {
-  "name": "sigma",
+  "name": "letsbesocial",
   "version": "1.0.0",
-  "description": "Sigma. Discord Bot with awesome moderation.",
+  "description": "LetsBeSocial Bot. Discord Bot with awesome moderation.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
