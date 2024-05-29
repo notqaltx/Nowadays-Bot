@@ -14,7 +14,9 @@ module.exports = (client, moderation) => {
             try {
                 const component = require(filePath);
                 component(client, log, moderation);
-                log.info(`Loaded component: ${file}`);
+                if (moderation.show_loaded_components) {
+                   log.info(`Loaded component: ${file}`);
+                }
             } catch (error) {
                 log.error(`Error loading component ${file}: ${error.message}`);
             }

@@ -1,5 +1,6 @@
 const fs = require('node:fs');
 const { EmbedBuilder } = require('../DiscordUtils');
+const settings = require('../../configs/settings.json');
 
 module.exports = (client, log, moderation) => {
     let bannedWords = [];
@@ -7,7 +8,9 @@ module.exports = (client, log, moderation) => {
         const data = fs.readFileSync('./configs/banned_words.json');
         const json = JSON.parse(data);
         bannedWords = json.bannedWords;
-        log.info(`Loaded ${bannedWords.length} banned words from JSON file.`);
+        if (settings.debug_messages) {
+          log.info(`Loaded ${bannedWords.length} banned words from JSON file.`);
+        }
     } catch (err) {
         log.fatal(`Error reading banned_words.json: ${err.message}`);
     }

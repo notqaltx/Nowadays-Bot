@@ -3,7 +3,7 @@ const settings = require('../../configs/settings.json');
 const Logger = require('../log');
 const log = new Logger();
 
-module.exports = (client) => {
+module.exports = (client, rest, Routes, clientId, guildId) => {
   try {
       readdirSync("./commands/").forEach((dir) => {
           const commands = readdirSync(`./commands/${dir}/`).filter((file) => file.endsWith(".js"));
@@ -30,4 +30,17 @@ module.exports = (client) => {
   } catch (e) {
       log.fatal(String(e.stack));
   }
+  (async () => {
+     try {
+         const commands = Array.from(client.commands.values()).map(c => c.data.toJSON());
+         log.info(`Started refreshing application (/) commands.`);
+         await rest.put(
+             Routes.applicationGuildCommands(clientId, guildId),
+             { body: commands },
+         );
+         log.info(`Successfully reloaded ${commands.length} application (/) commands.`);
+     } catch (error) {
+         log.error(error);
+     }
+  })();
 };

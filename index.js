@@ -21,8 +21,8 @@ client.commands = new Collection();
 client.aliases = new Collection();
 
 // # LOAD COMMANDS AND COMPONENTS
-DeployCommands(client);
-LoadComponents(client, moderation);
+DeployCommands( client, rest, Routes, clientId, guildId );
+LoadComponents( client, moderation );
 
 let currentActivityIndex = 0;
 const activities = [
@@ -40,19 +40,8 @@ function updateActivity() {
 client.on('ready', async () => {
     const guild = client.guilds.cache.get(guildId);
     if (!guild) {
-        log.error(`[ERROR] Guild with ID ${guildId} not found.`);
+        log.error(`Guild with ID ${guildId} not found.`);
         return; 
-    }
-    try {
-        const commands = Array.from(client.commands.values()).map(c => c.data.toJSON());
-        log.info(`Started refreshing application (/) commands.`);
-        await rest.put(
-            Routes.applicationGuildCommands(clientId, guildId),
-            { body: commands },
-        );
-        log.info(`Successfully reloaded ${commands.length} application (/) commands.`);
-    } catch (error) {
-        log.error(error);
     }
     log.info(`Logged in as ${client.user.tag}!`);
     updateActivity();
