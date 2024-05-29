@@ -1,10 +1,10 @@
 {
  "token": "MTA0MTM1NDEyOTQ3OTU2NTM0Mg.GrMMQl.wAYxv6fSYw1ff50e76ySgfV60wlySQe40dZ3SM",
  "clientId": "1041354129479565342",
-	"guildId": "1208959063472341064",
+	"guildId": "1245023466655318037",
  "moderation": {
    "messageLimit": 5,
    "timeLimit": 5000,
-   "reportsId": "1243998468322885673"
+   "reportsId": "1245023558346735736"
  }
 }

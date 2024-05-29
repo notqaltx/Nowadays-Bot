@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "echo \"Loading bot...\" && node index.js",
-    "deploy": "node deploy.js",
+    "deploy": "node utils/Commands/DeployCommands.js",
     "start-deploy": "npm run deploy && npm run start",
-    "delete-cmds": "echo \"WARNING: Please make sure to deploy it.\" node ./utils/delete.js"
+    "delete-cmds": "echo \"WARNING: Please make sure to deploy it.\" node utils/Commands/DeleteCommands.js"
   },
   "keywords": [],
   "author": "",

@@ -1,5 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const fs = require('node:fs');
+const Logger = require('../../utils/log');
+const log = new Logger();
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -35,7 +37,7 @@ module.exports = {
             const json = JSON.parse(data);
             bannedWords = json.bannedWords;
         } catch (err) {
-            log(`Error reading banned_words.json: ${err.message}`);
+            log.fatal(`Error reading banned_words.json: ${err.message}`);
             return interaction.reply({
                 content: 'There was an error reading the banned words file.',
                 ephemeral: true

@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const log = require('../utils/logger');
+const Logger = require('../../utils/log');
+const log = new Logger();
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -31,10 +32,10 @@ module.exports = {
             return interaction.reply({ content: `${target.user.tag} has been timed out for ${durationMinutes} minutes. Reason: ${reason}` });
         } catch (error) {
            if (error.code === 50013) {
-               log('Bot does not have permission to timeout members.');
+               log.fatal('Bot does not have permission to timeout members.');
                return interaction.reply({ content: 'I do not have permission to timeout members.', ephemeral: true });
            } else {
-               log(error);
+               log.error(error);
                return interaction.reply({ content: 'An error occurred while attempting to timeout the user.', ephemeral: true });
            }
         }

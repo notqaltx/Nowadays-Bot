@@ -1,7 +1,8 @@
 // Delete Application Commands.
 const { REST, Routes } = require('discord.js');
-const { token, clientId, guildId } = require('../configs/bot.json');
-const log = require('./logger');
+const { token, clientId, guildId } = require('../../configs/bot.json');
+const Logger = require('../log');
+const log = new Logger();
 
 const rest = new REST({ version: 10 }).setToken(token);
 try {
@@ -9,7 +10,7 @@ try {
      Routes.applicationCommands(clientId, guildId), 
      { body: [] }
    );
-   log(`Successfully deleted all Application Commands.`);
+   log.info(`Successfully deleted all Application Commands.`);
 } catch (error) {
-   log(error);
+   log.error(error);
 }

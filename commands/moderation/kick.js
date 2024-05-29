@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { moderation } = require('../configs/bot.json')
-const log = require('../utils/logger')
+const { moderation } = require('../../configs/bot.json')
+const Logger = require('../../utils/log');
+const log = new Logger();
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -31,7 +32,7 @@ module.exports = {
             if (reportChannel) {
                 await reportChannel.send({ embeds: [reportEmbed] });
             } else {
-                log('Report channel not found.');
+                log.error('Report channel not found.');
             }
             const userEmbed = new EmbedBuilder()
                  .setColor('#FF0000')
@@ -42,10 +43,10 @@ module.exports = {
             try {
                 await target.send({ embeds: [userEmbed] });
             } catch (error) {
-                log(`Failed to send DM to kicked user ${target.user.tag}: ${error}`);
+                log.error(`Failed to send DM to kicked user ${target.user.tag}: ${error}`);
             }
         } catch (error) {
-            log(`Error kicking user: ${error}`);
+            log.fatal(`Error kicking user: ${error}`);
             await interaction.reply({ content: 'There was an error while kicking this user.', ephemeral: true });
         }
     },
