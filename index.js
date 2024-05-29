@@ -31,10 +31,10 @@ const client = new Client({
 client.commands = new Collection();
 client.aliases = new Collection();
 
-app.get('/', (req, res) => {
-  res.send('Opening server...'); 
+app.get('/ping', (req, res) => {
+  res.sendStatus(200); 
 });
-server.listen(3000, () => { log.info("Server is running!"); });
+app.listen(3000, () => { log.info("Server is running!"); });
 // # LOAD COMMANDS AND COMPONENTS
 DeployCommands.init( client, rest, Routes, CLIENT_ID, GUILD_ID );
 LoadComponents.init( client, moderation );
