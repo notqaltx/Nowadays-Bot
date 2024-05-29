@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const Logger = require('./log.util');
+const Logger = require('../utils/log.util');
 const log = new Logger();
 
 module.exports = {
@@ -9,7 +9,9 @@ module.exports = {
        const componentFolders = fs.readdirSync(componentsPath).filter(file => fs.lstatSync(path.join(componentsPath, file)).isDirectory());
    
        for (const folder of componentFolders) {
-           const files = fs.readdirSync(path.join(componentsPath, folder)).filter(file => file.endsWith('.js'));
+           const files = fs.readdirSync(path.join(componentsPath, folder)).filter(file => 
+              file.endsWith('.js') && !file.includes('.main') && !file.includes('.utils')
+           );
            for (const file of files) {
                const filePath = path.join(componentsPath, folder, file);
                try {

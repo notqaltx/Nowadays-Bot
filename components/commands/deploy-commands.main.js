@@ -1,6 +1,6 @@
 const { readdirSync } = require("fs");
 const settings = require('../../configs/settings.json');
-const Logger = require('../log.util');
+const Logger = require('../../utils/log.util');
 const log = new Logger();
 
 module.exports = {

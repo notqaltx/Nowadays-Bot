@@ -5,8 +5,8 @@ require('dotenv').config()
 const { TOKEN, GUILD_ID, CLIENT_ID } = process.env;
 
 const rest = new REST({ version: 10 }).setToken(TOKEN);
-const DeployCommands = require('./utils/Commands/DeployCommands');
-const LoadComponents = require('./utils/LoadComponents');
+const DeployCommands = require('./components/commands/deploy-commands.main');
+const LoadComponents = require('./components/load-components.main');
 
 const { moderation } = require('./configs/bot.json');
 const settings = require('./configs/settings.json');

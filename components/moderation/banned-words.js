@@ -1,5 +1,5 @@
 const fs = require('node:fs');
-const { EmbedBuilder } = require('../DiscordUtils');
+const { EmbedBuilder } = require('../discord.utils');
 const settings = require('../../configs/settings.json');
 
 module.exports = (client, log, moderation) => {

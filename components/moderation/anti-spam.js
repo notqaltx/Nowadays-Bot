@@ -1,4 +1,4 @@
-const { Collection } = require('../DiscordUtils');
+const { Collection } = require('../discord.utils');
 
 module.exports = (client, log, moderation) => {
     const userMessageTimestamps = new Collection();
