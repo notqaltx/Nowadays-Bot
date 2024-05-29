@@ -1,7 +1,5 @@
 const express = require("express");
 const app = express();
-const http = require('http');
-const server = http.createServer(app);
 
 const Discord = require('discord.js');
 const { Client, Collection, Events, Routes, REST, GatewayIntentBits } = Discord;
@@ -32,9 +30,11 @@ client.commands = new Collection();
 client.aliases = new Collection();
 
 app.get('/ping', (req, res) => {
-  res.sendStatus(200); 
+ res.sendStatus(200); 
 });
-app.listen(3000, () => { log.info("Server is running!"); });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => { log.info(`Server is running on port ${PORT}!`); });
+
 // # LOAD COMMANDS AND COMPONENTS
 DeployCommands.init( client, rest, Routes, CLIENT_ID, GUILD_ID );
 LoadComponents.init( client, moderation );
