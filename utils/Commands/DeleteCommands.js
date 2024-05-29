@@ -1,7 +1,7 @@
 // Delete Application Commands.
 const { REST, Routes } = require('discord.js');
 const { token, clientId, guildId } = require('../../configs/bot.json');
-const Logger = require('../log');
+const Logger = require('../log.util');
 const log = new Logger();
 
 const rest = new REST({ version: 10 }).setToken(token);

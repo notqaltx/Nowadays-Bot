@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const { Client, Collection, Events, Routes, REST, GatewayIntentBits } = Discord;
-const { TOKEN, GUILD_ID, CLIENT_ID } = require('dotenv').config();
+
+require('dotenv').config()
+const { TOKEN, GUILD_ID, CLIENT_ID } = process.env;
 
 const rest = new REST({ version: 10 }).setToken(TOKEN);
 const DeployCommands = require('./utils/Commands/DeployCommands');
