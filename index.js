@@ -1,15 +1,19 @@
 const Discord = require('discord.js');
 const { Client, Collection, Events, Routes, REST, GatewayIntentBits } = Discord;
+const { TOKEN, GUILD_ID, CLIENT_ID } = require('dotenv').config();
 
-const { token, clientId, guildId, moderation } = require('./configs/bot.json');
-const settings = require('./configs/settings.json');
-const Logger = require('./utils/log');
-const log = new Logger();
-
-const rest = new REST({ version: 10 }).setToken(token);
+const rest = new REST({ version: 10 }).setToken(TOKEN);
 const DeployCommands = require('./utils/Commands/DeployCommands');
 const LoadComponents = require('./utils/LoadComponents');
 
+const { moderation } = require('./configs/bot.json');
+const settings = require('./configs/settings.json');
+
+const Logger = require('./utils/log.util');
+const AntiCrash = require('./utils/anti-crash.util');
+AntiCrash.init();
+
+const log = new Logger();
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -21,8 +25,8 @@ client.commands = new Collection();
 client.aliases = new Collection();
 
 // # LOAD COMMANDS AND COMPONENTS
-DeployCommands( client, rest, Routes, clientId, guildId );
-LoadComponents( client, moderation );
+DeployCommands.init( client, rest, Routes, CLIENT_ID, GUILD_ID );
+LoadComponents.init( client, moderation );
 
 let currentActivityIndex = 0;
 const activities = [
@@ -38,9 +42,9 @@ function updateActivity() {
     currentActivityIndex = (currentActivityIndex + 1) % activities.length;
 }
 client.on('ready', async () => {
-    const guild = client.guilds.cache.get(guildId);
+    const guild = client.guilds.cache.get(GUILD_ID);
     if (!guild) {
-        log.error(`Guild with ID ${guildId} not found.`);
+        log.error(`Guild with ID ${GUILD_ID} not found.`);
         return; 
     }
     log.info(`Logged in as ${client.user.tag}!`);
@@ -70,4 +74,4 @@ client.on('messageCreate', async (message) => {
     }
 });
 
-client.login(token); 
+client.login(TOKEN); 

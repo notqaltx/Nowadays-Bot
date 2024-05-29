@@ -8,10 +8,21 @@
     "start": "echo \"Loading bot...\" && node index.js",
     "delete-cmds": "echo \"WARNING: Please make sure to deploy it.\" node utils/Commands/DeleteCommands.js"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/notqaltx/LetsBeSocial.Bot.git"
+  },
+  "keywords": [
+    "LetsBeSocial",
+    "letsbesocial",
+    "lbs",
+    "LBS"
+  ],
+  "author": "Alex (unqkl, notqaltx) Klokotskiy",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^14.15.2"
-  }
+    "discord.js": "^14.15.2",
+    "dotenv": "^16.4.5"
+  },
+  "homepage": "https://github.com/notqaltx/LetsBeSocial.Bot#readme"
 }
