@@ -1,3 +1,6 @@
+const express = require("express");
+const app = express();
+
 const Discord = require('discord.js');
 const { Client, Collection, Events, Routes, REST, GatewayIntentBits } = Discord;
 
@@ -26,6 +29,9 @@ const client = new Client({
 client.commands = new Collection();
 client.aliases = new Collection();
 
+app.listen(3000, () => {
+  log.info("Server is running!");
+})
 // # LOAD COMMANDS AND COMPONENTS
 DeployCommands.init( client, rest, Routes, CLIENT_ID, GUILD_ID );
 LoadComponents.init( client, moderation );

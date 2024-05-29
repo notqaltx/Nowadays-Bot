@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "echo \"Loading bot...\" && node index.js",
-    "delete-cmds": "echo \"WARNING: Please make sure to deploy it.\" node utils/Commands/DeleteCommands.js"
+    "deploy": "echo \"Deploying slash commands...\" && node utils/deploy-npm.util.js",
+    "delete-cmds": "node components/commands/delete-commands.main.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,8 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^14.15.2",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
   },
   "homepage": "https://github.com/notqaltx/LetsBeSocial.Bot#readme"
 }
