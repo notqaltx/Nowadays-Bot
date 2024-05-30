@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "echo \"Loading bot...\" && pm2 start index.js --watch",
+    "start": "echo \"Loading bot...\" && pm2-runtime utils/ecosystem.config.js",
     "deploy": "echo \"Deploying slash commands...\" && node utils/deploy-npm.util.js",
     "delete-cmds": "node components/commands/delete-commands.main.js"
   },
