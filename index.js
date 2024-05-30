@@ -1,3 +1,4 @@
+const axios = require("axios");
 const express = require("express");
 const app = express();
 
@@ -29,10 +30,17 @@ const client = new Client({
 client.commands = new Collection();
 client.aliases = new Collection();
 
+axios.get('WEBSITE HERE')
+  .then(response => {
+    log.info('Response:', response.data);
+  })
+  .catch(error => {
+    log.error('Error:', error);
+  });
 app.get('/ping', (req, res) => {
  res.sendStatus(200); 
 });
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 2222;
 app.listen(PORT, () => { log.info(`Server is running on port ${PORT}!`); });
 
 // # LOAD COMMANDS AND COMPONENTS
