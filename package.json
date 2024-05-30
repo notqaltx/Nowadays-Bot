@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "echo \"Loading bot...\" && node index.js",
+    "start": "echo \"Loading bot...\" && pm2-runtime utils/ecosystem.config.js",
     "deploy": "echo \"Deploying slash commands...\" && node utils/deploy-npm.util.js",
     "delete-cmds": "node components/commands/delete-commands.main.js"
   },
@@ -24,7 +24,8 @@
   "dependencies": {
     "discord.js": "^14.15.2",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "pm2": "^5.4.0"
   },
   "homepage": "https://github.com/notqaltx/LetsBeSocial.Bot#readme"
 }
