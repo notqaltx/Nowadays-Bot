@@ -1,4 +1,3 @@
-const axios = require("axios");
 const express = require("express");
 const app = express();
 
@@ -6,7 +5,7 @@ const Discord = require('discord.js');
 const { Client, Collection, Events, Routes, REST, GatewayIntentBits } = Discord;
 
 require('dotenv').config()
-const { TOKEN, GUILD_ID, CLIENT_ID } = process.env;
+const { TOKEN, GUILD_ID, CLIENT_ID, CLIENT_SECRET_ID, PORT } = process.env;
 
 const rest = new REST({ version: 10 }).setToken(TOKEN);
 const DeployCommands = require('./components/commands/deploy-commands.main');
@@ -27,21 +26,43 @@ const client = new Client({
         GatewayIntentBits.MessageContent,
     ]
 });
+const clientUtils = require('./components/client.utils');
+clientUtils.setClient(client);
 client.commands = new Collection();
 client.aliases = new Collection();
 
-axios.get('WEBSITE HERE')
-  .then(response => {
-    log.info('Response:', response.data);
-  })
-  .catch(error => {
-    log.error('Error:', error);
-  });
-app.get('/ping', (req, res) => {
- res.sendStatus(200); 
+const MAIN_PORT = PORT || 2222;
+app.get('/', async ({ query }, response) => {
+   const { code } = query;
+   if (code) {
+     try {
+        const tokenResponseData = await request('https://discord.com/api/oauth2/token', {
+         method: 'POST',
+         body: new URLSearchParams({
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET_ID,
+            code,
+            grant_type: 'authorization_code',
+            redirect_uri: `http://localhost:${port}`,
+            scope: 'identify',
+         }).toString(),
+         headers: {
+           'Content-Type': 'application/x-www-form-urlencoded',
+         },
+       });
+       const oauthData = await tokenResponseData.body.json();
+       const userResult = await request('https://discord.com/api/users/@me', {
+         headers: {
+           authorization: `${oauthData.token_type} ${oauthData.access_token}`,
+         },
+       });
+       console.log(await userResult.body.json());
+     } catch (error) { console.error(error); }
+   }
+	  return response.sendFile('./oauth2/index.html', { root: '.' });
 });
-const PORT = process.env.PORT || 2222;
-app.listen(PORT, () => { log.info(`Server is running on port ${PORT}!`); });
+app.get('/ping', (request, response) => { response.sendStatus(200); });
+app.listen(MAIN_PORT, () => { log.info(`Server is running on port ${MAIN_PORT}!`); });
 
 // # LOAD COMMANDS AND COMPONENTS
 DeployCommands.init( client, rest, Routes, CLIENT_ID, GUILD_ID );
@@ -82,7 +103,11 @@ client.on(Events.InteractionCreate, async interaction => {
     try { await command.execute(interaction, client);
     } catch (error) {
         log.fatal(error);
-        await interaction.reply({ content: 'There was an error executing this command!', ephemeral: true });
+        if (!interaction.replied && !interaction.deferred) { 
+            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+        } else {
+            await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+        }
     }
 });
 
