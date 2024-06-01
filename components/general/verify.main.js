@@ -35,7 +35,7 @@ module.exports = async (client, interaction) => {
         const collector = interaction.channel.createMessageCollector({ filter, time: 180000, max: 1 });
         collector.on('collect', async (msg) => {
             try {
-                const verificationCode = msg.content.toLowerCase();
+                const verificationCode = msg.content;
                 const response = await axios.get(`${CACHE_SITE_LINK}bot/verify`, {
                     headers: { 'auth-key': AUTH_KEY }
                 });
@@ -47,7 +47,7 @@ module.exports = async (client, interaction) => {
                    });
                    return reject(new Error('API response is not an array'));
                 }
-                const account = response.data.find(acc => acc.verificationcode.toLowerCase() === verificationCode);
+                const account = response.data.find(acc => acc.verificationcode === verificationCode);
                 if (account) {
                      if (role) {
                          await msg.delete()
