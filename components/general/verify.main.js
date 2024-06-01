@@ -72,7 +72,6 @@ module.exports = async (client, interaction) => {
                                 .setTitle("Successfully verified your LetsBeSocial account!")
                                 .setDescription(`You've been successfully verified. Congrats!`);
                             await interaction.followUp({ embeds: [verifiedEmbed], ephemeral: true });
-                            log.debug('Verification successful for user:', interaction.user.tag);
                          });
                          if (member.manageable) {
                              await member.setNickname(`${account.display} (@${account.user})`);
