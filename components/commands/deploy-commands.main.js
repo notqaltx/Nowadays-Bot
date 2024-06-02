@@ -1,10 +1,11 @@
-const { readdirSync } = require("fs");
-const settings = require('../../configs/settings.json');
-const Logger = require('../../utils/log.util');
+const { readdirSync } = require("node:fs");
+
+const bot = require('../../components/configs/bot.config');
+const Logger = require('../../components/utils/log.util');
 const log = new Logger();
 
 module.exports = {
-   init: (client, rest, Routes, clientId, guildId) => {
+   init: (client, rest, Routes) => {
      try {
          readdirSync("./commands/").forEach((dir) => {
              const commands = readdirSync(`./commands/${dir}/`).filter((file) => file.endsWith(".js"));
@@ -13,7 +14,7 @@ module.exports = {
                      let pull = require(`../../commands/${dir}/${file}`);
                      if (pull.data && typeof pull.data.name === 'string') {
                          client.commands.set(pull.data.name, pull);
-                         if (settings.show_loaded_commands) {
+                         if (bot.developer.debugging.show_loaded_commands) {
                              log.info(`Loaded Command: ${file}`);
                          }
                      } else {
@@ -34,12 +35,12 @@ module.exports = {
       (async () => {
          try {
              const commands = Array.from(client.commands.values()).map(c => c.data.toJSON());
-             log.info(`Started refreshing application (/) commands.`);
+             if (bot.developer.debug) { log.info(`Started refreshing application (/) commands.`); }
              await rest.put(
-                 Routes.applicationGuildCommands(clientId, guildId),
+                 Routes.applicationGuildCommands(bot.clientId, bot.guildId),
                  { body: commands },
              );
-             log.info(`Successfully reloaded ${commands.length} application (/) commands.`);
+             if (bot.developer.debug) { log.info(`Successfully reloaded ${commands.length} application (/) commands.`); }
          } catch (error) {
              log.error(error);
          }

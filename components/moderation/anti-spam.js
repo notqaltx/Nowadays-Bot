@@ -1,6 +1,6 @@
 const { Collection } = require('../discord.utils');
 
-module.exports = (client, log, moderation) => {
+module.exports = (client, log, bot) => {
     const userMessageTimestamps = new Collection();
     const warnedUsers = new Set();
 
@@ -10,13 +10,13 @@ module.exports = (client, log, moderation) => {
         let timestamps = userMessageTimestamps.get(userId) || [];
         timestamps.push(now);
 
-        const recentTimestamps = timestamps.filter(t => now - t < moderation.timeLimit);
+        const recentTimestamps = timestamps.filter(t => now - t < bot.moderation.timeLimit);
         userMessageTimestamps.set(userId, recentTimestamps);
-        if (recentTimestamps.length > moderation.messageLimit) {
-           const messagesToDelete = await message.channel.messages.fetch({ limit: moderation.messageLimit + 1 })
+        if (recentTimestamps.length > bot.moderation.messageLimit) {
+           const messagesToDelete = await message.channel.messages.fetch({ limit: bot.moderation.messageLimit + 1 })
                 .then(messages => messages.filter(msg => 
                     msg.author.id === userId &&
-                    now - msg.createdTimestamp < moderation.timeLimit
+                    now - msg.createdTimestamp < bot.moderation.timeLimit
                 ))
                 .catch(error => {
                     log.fatal(`Error fetching messages: ${error}`);

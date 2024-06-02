@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { moderation } = require('../../configs/bot.json')
-const Logger = require('../../utils/log.util');
+const bot = require('../../components/configs/bot.config');
+const Logger = require('../../components/utils/log.util');
 const log = new Logger();
 
 module.exports = {
@@ -28,7 +28,7 @@ module.exports = {
                     { name: 'Reason', value: reason, inline: true },
                     { name: 'Time', value: new Date().toLocaleString() }
             );
-            const reportChannel = interaction.guild.channels.cache.get(moderation.reportsId);
+            const reportChannel = interaction.guild.channels.cache.get(bot.channels.reportsChannel);
             if (reportChannel) {
                 await reportChannel.send({ embeds: [reportEmbed] });
             } else {

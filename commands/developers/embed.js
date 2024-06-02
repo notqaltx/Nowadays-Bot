@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const settings = require('../../configs/settings.json');
-const Logger = require('../../utils/log.util');
+
+const bot = require('../../components/configs/bot.config');
+const Logger = require('../../components/utils/log.util');
 const log = new Logger();
 
 module.exports = {
@@ -24,7 +25,7 @@ module.exports = {
       const colorString = interaction.options.getString('color');
 
       if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
-          if (settings.debug_messages) { log.info(`${interaction.user.tag} do not have a permission to use /embed command.`); }
+          if (bot.developer.debug) { log.info(`${interaction.user.tag} do not have a permission to use /embed command.`); }
           return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true });
       }
       let color = 0x0099FF;
@@ -32,7 +33,7 @@ module.exports = {
           const hexCode = colorString.startsWith('#') ? colorString.slice(1) : colorString;
           if (/^[0-9A-Fa-f]{6}$/.test(hexCode)) { color = parseInt(hexCode, 16);
           } else {
-              if (settings.debug_messages) { log.warn(`${interaction.user.tag} wrote a invalid color code for the /embed command.`); }
+              if (bot.developer.debug) { log.warn(`${interaction.user.tag} wrote a invalid color code for the /embed command.`); }
               return interaction.reply({ content: 'Invalid color code. Please use a 6-digit hex code (e.g., #0099FF).', ephemeral: true });
           }
       }

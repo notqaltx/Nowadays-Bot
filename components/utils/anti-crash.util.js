@@ -1,4 +1,4 @@
-const Logger = require('./log.util');
+const Logger = require('../../components/utils/log.util');
 const log = new Logger();
 
 module.exports = {

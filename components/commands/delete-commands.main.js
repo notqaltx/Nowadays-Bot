@@ -1,15 +1,13 @@
-// Delete Application Commands.
 const { REST, Routes } = require('discord.js');
-const Logger = require('../../utils/log.util');
+
+const bot = require('../../components/configs/bot.config');
+const Logger = require('../../components/utils/log.util');
 const log = new Logger();
 
-require('dotenv').config()
-const { TOKEN, GUILD_ID, CLIENT_ID } = process.env;
-const rest = new REST({ version: 10 }).setToken(TOKEN);
-
+const rest = new REST({ version: 10 }).setToken(bot.token);
 try {
    rest.put(
-     Routes.applicationCommands(CLIENT_ID, GUILD_ID), 
+     Routes.applicationCommands(bot.clientId, bot.guildId), 
      { body: [] }
    );
    log.info(`Successfully deleted all Application Commands.`);

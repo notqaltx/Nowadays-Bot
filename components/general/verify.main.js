@@ -1,15 +1,12 @@
 const axios = require("axios");
 const { EmbedBuilder } = require('discord.js');
 
-const settings = require('../../configs/settings.json');
-const Logger = require('../../utils/log.util');
+const bot = require('../../components/configs/bot.config');
+const Logger = require('../../components/utils/log.util');
 const log = new Logger();
 
-require('dotenv').config()
-const { GUILD_ID, CACHE_SITE_LINK, AUTH_KEY, VERIFICATION_CHANNEL_ID } = process.env;
-
 module.exports = async (client, interaction) => {
-     const guild = client.guilds.cache.get(GUILD_ID);
+     const guild = client.guilds.cache.get(bot.guildId);
      const member = guild.members.cache.get(interaction.user.id);
 
      const role = guild.roles.cache.find(role => role.name === "Verified Account");
@@ -26,18 +23,18 @@ module.exports = async (client, interaction) => {
         .addFields(
             { name: 'Step 1:', value: `Join the **[LetsBeSocial Verification Page](https://www.roblox.com/games/start?launchData=%7B"From"%3A"Verify"%7D&placeId=16366216449)** on Roblox.\
             \n :warning: Make sure to **not touch anything** when you clicked the link!` },
-            { name: 'Step 2:', value: `Copy the **Verification Code** and send it in the <#${VERIFICATION_CHANNEL_ID}> channel.` }
+            { name: 'Step 2:', value: `Copy the **Verification Code** and send it in the <#${bot.channels.verificationChannel}> channel.` }
         );
     await interaction.reply({ embeds: [userEmbed], ephemeral: true });
 
-    const filter = m => m.author.id === interaction.user.id && m.channel.id === VERIFICATION_CHANNEL_ID; 
+    const filter = m => m.author.id === interaction.user.id && m.channel.id === bot.channels.verificationChannel; 
     const verificationPromise = new Promise(async (resolve, reject) => {
         const collector = interaction.channel.createMessageCollector({ filter, time: 180000, max: 1 });
         collector.on('collect', async (msg) => {
             try {
                 const verificationCode = msg.content;
-                const response = await axios.get(`${CACHE_SITE_LINK}bot/verify`, {
-                    headers: { 'auth-key': AUTH_KEY }
+                const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}bot/verify`, {
+                    headers: { 'auth-key': bot.developer.oauth.secret }
                 });
                 if (!Array.isArray(response.data)) {
                    log.error('API response is not an array:', response.data);
@@ -76,18 +73,18 @@ module.exports = async (client, interaction) => {
                          if (member.manageable) {
                              await member.setNickname(`${account.display} (@${account.user})`);
                          } else {
-                             if (settings.debug_messages) {
+                             if (bot.developer.debug) {
                                 log.warn('Bot does not have permission to change nickname for user:', interaction.user.tag);
                                 await interaction.followUp({ 
                                    content: 'Verification successful, but I cannot change your nickname due to insufficient permissions.', ephemeral: true 
                                 });
                              }
                          }
-                         if (settings.debug_messages) { log.debug('Verification successful for user:', interaction.user.tag); }
+                         if (bot.developer.debug) { log.debug('Verification successful for user:', interaction.user.tag); }
                          resolve();
                      } else {
                          await msg.delete();
-                         if (settings.debug_messages) {
+                         if (bot.developer.debug) {
                             log.warn('Verified Account role not found.');
                             await interaction.editReply({ 
                                content: 'Verification successful, but the Verified Account role was not found.' , ephemeral: true
@@ -100,14 +97,14 @@ module.exports = async (client, interaction) => {
                          .setColor('#FF0000')
                          .setTitle("Invalid verification code. Please try again.");
                      await interaction.editReply({ embeds: [invalidCodeEmbed], ephemeral: true });
-                     if (settings.debug_messages) {
+                     if (bot.developer.debug) {
                          log.warn('Invalid verification code when verifying:', interaction.user.tag);
                      }
                      reject();
                 }
             } catch (error) {
                 await msg.delete();
-                if (settings.debug_messages) {
+                if (bot.developer.debug) {
                    log.error('Error during verification:', error);
                 }
                 const error1Embed = new EmbedBuilder()
@@ -127,7 +124,7 @@ module.exports = async (client, interaction) => {
                    .setTitle("Verification Timed Out")
                    .setDescription(`You didn't provide the verification code in time. Please try again.`);
                await interaction.editReply({ embeds: [timeoutEmbed], ephemeral: true });
-               if (settings.debug_messages) {
+               if (bot.developer.debug) {
                    log.warn('Verification Timed Out for user:', interaction.user.tag);
                }
                reject();
