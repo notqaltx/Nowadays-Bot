@@ -5,9 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "echo \"Loading bot...\" && pm2-runtime utils/ecosystem.config.js",
-    "deploy": "echo \"Deploying slash commands...\" && node utils/deploy-npm.util.js",
-    "delete-cmds": "node components/commands/delete-commands.main.js"
+    "start": "echo \"Loading bot...\" && pm2 start components/utils/ecosystem.config.js --watch",
+    "deploy": "echo \"Deploying slash commands...\" && node components/utils/deploy-npm.util.js",
+    "delete-cmds": "node components/commands/delete-commands.main.js",
+    "server-test": "nodemon components/general/server.main.js",
+    "server-build": "cd server && npm run build",
+    "server-dev": "echo \"Loading server...\" && cd server && npm run start"
   },
   "repository": {
     "type": "git",
@@ -24,10 +27,17 @@
   "dependencies": {
     "axios": "^1.7.2",
     "discord.js": "^14.15.2",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
     "pm2": "^5.4.0",
     "undici": "^6.18.2"
   },
-  "homepage": "https://github.com/notqaltx/LetsBeSocial.Bot#readme"
+  "homepage": "https://github.com/notqaltx/LetsBeSocial.Bot#readme",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.13.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemon": "^3.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
 }
