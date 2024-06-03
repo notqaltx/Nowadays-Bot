@@ -12,12 +12,12 @@ module.exports = async (client, interaction) => {
      const role = guild.roles.cache.find(role => role.name === "Verified Account");
      if (role && member.roles.cache.has(role.id)) {
         const alreadyVerifiedEmbed = new EmbedBuilder()
-            .setColor('#385EF5')
+            .setColor('#0099FF')
             .setTitle("You've already verified your **LetsBeSocial** Account!");
         return await interaction.editReply({ embeds: [alreadyVerifiedEmbed], ephemeral: true });
      }
      const userEmbed = new EmbedBuilder()
-        .setColor('#385EF5')
+        .setColor('#0099FF')
         .setTitle("Verifying your LetsBeSocial account.")
         .setDescription(`Hello, **${interaction.user.tag}**.\n To verify your account you should do these steps:`)
         .addFields(

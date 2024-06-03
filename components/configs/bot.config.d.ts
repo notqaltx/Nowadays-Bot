@@ -16,6 +16,7 @@ interface BotConfig {
    };
    developer: {
        debug: boolean;
+       id: number;
        debugging: {
           show_loaded_commands: boolean;
           show_loaded_components: boolean;

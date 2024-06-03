@@ -34,7 +34,7 @@ module.exports = {
 
         let bannedWords = [];
         try {
-            const data = fs.readFileSync('./configs/banned_words.json');
+            const data = fs.readFileSync('./components/configs/banned_words.json');
             const json = JSON.parse(data);
             bannedWords = json.bannedWords;
         } catch (err) {
@@ -56,7 +56,7 @@ module.exports = {
             }
             bannedWords.splice(index, 1);
         }
-        fs.writeFileSync('./configs/banned_words.json', JSON.stringify({ bannedWords }));
+        fs.writeFileSync('./components/configs/banned_words.json', JSON.stringify({ bannedWords }));
         return interaction.reply({
             content: `Word "${word}" ${action === 'add' ? 'added to' : 'removed from'} the banned words list.`,
             ephemeral: true

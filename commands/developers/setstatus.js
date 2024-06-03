@@ -5,7 +5,7 @@ const log = new Logger();
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('setstatus')
+        .setName('set-status')
         .setDescription('Set the bot\'s status (admin only)')
         .addStringOption(option =>
             option.setName('status')

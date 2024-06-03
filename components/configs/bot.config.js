@@ -17,6 +17,7 @@ var config = {
    },
    developer: {
        debug: true,
+       id: 523540249528500224,
        debugging: {
           show_loaded_commands: false,
           show_loaded_components: false,
