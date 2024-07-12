@@ -13,15 +13,15 @@ module.exports = async (client, interaction) => {
      if (role && member.roles.cache.has(role.id)) {
         const alreadyVerifiedEmbed = new EmbedBuilder()
             .setColor('#0099FF')
-            .setTitle("You've already verified your **LetsBeSocial** Account!");
+            .setTitle("You've already verified your **Roblox** Account!");
         return await interaction.editReply({ embeds: [alreadyVerifiedEmbed], ephemeral: true });
      }
      const userEmbed = new EmbedBuilder()
         .setColor('#0099FF')
-        .setTitle("Verifying your LetsBeSocial account.")
+        .setTitle("Verifying your Roblox Account.")
         .setDescription(`Hello, **${interaction.user.tag}**.\n To verify your account you should do these steps:`)
         .addFields(
-            { name: 'Step 1:', value: `Join the **[LetsBeSocial Verification Page](https://www.roblox.com/games/start?launchData=%7B"From"%3A"Verify"%7D&placeId=16366216449)** on Roblox.\
+            { name: 'Step 1:', value: `Join the **[Game Verification Page](${bot.developer.oauth.robloxVerificationURL})** on Roblox.\
             \n :warning: Make sure to **not touch anything** when you clicked the link!` },
             { name: 'Step 2:', value: `Copy the **Verification Code** and send it in the <#${bot.channels.verificationChannel}> channel.` }
         );
@@ -33,7 +33,7 @@ module.exports = async (client, interaction) => {
         collector.on('collect', async (msg) => {
             try {
                 const verificationCode = msg.content;
-                const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}bot/verify`, {
+                const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}/bot/verify`, {
                     headers: { 'auth-key': bot.developer.oauth.secret }
                 });
                 if (!Array.isArray(response.data)) {
@@ -44,7 +44,7 @@ module.exports = async (client, interaction) => {
                    });
                    return reject(new Error('API response is not an array'));
                 }
-                const account = response.data.find(acc => acc.verificationcode === verificationCode);
+                const account = response.data.find(acc => acc.Code === verificationCode);
                 if (account) {
                      if (role) {
                          await msg.delete()
@@ -59,14 +59,14 @@ module.exports = async (client, interaction) => {
                                const errorVerifyingEmbed = new EmbedBuilder()
                                    .setColor('#FF0000')
                                    .setTitle("Error while verifying your account.")
-                                   .setDescription(`You're not a LetsBeSocial Discord Server member.\n Please rejoin it and try again.`);
+                                   .setDescription(`You're not a Nowadays Discord Server member.\n Please rejoin it and try again.`);
                                await interaction.followUp({ embeds: [errorVerifyingEmbed], ephemeral: true });
                                log.error('Error while verifying user:', interaction.user.tag);
                                return reject(new Error('User is not a guild member'));
                             }
                             const verifiedEmbed = new EmbedBuilder()
                                 .setColor('#16FA4C')
-                                .setTitle("Successfully verified your LetsBeSocial account!")
+                                .setTitle("Successfully verified your Roblox Account!")
                                 .setDescription(`You've been successfully verified. Congrats!`);
                             await interaction.followUp({ embeds: [verifiedEmbed], ephemeral: true });
                          });

@@ -1,7 +1,7 @@
 {
-  "name": "letsbesocial",
+  "name": "nowadays",
   "version": "1.0.0",
-  "description": "LetsBeSocial Bot. Discord Bot with awesome moderation.",
+  "description": "Nowadays Bot. Discord Bot with awesome verification.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,13 +14,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/notqaltx/LetsBeSocial.Bot.git"
+    "url": "git+https://github.com/notqaltx/Nowadays-Bot.git"
   },
   "keywords": [
-    "LetsBeSocial",
-    "letsbesocial",
-    "lbs",
-    "LBS"
+    "Nowadays",
+    "nowadays",
+    "nowa",
+    "days"
   ],
   "author": "Alex (unqkl, notqaltx) Klokotskiy",
   "license": "ISC",
@@ -32,7 +32,7 @@
     "pm2": "^5.4.0",
     "undici": "^6.18.2"
   },
-  "homepage": "https://github.com/notqaltx/LetsBeSocial.Bot#readme",
+  "homepage": "https://github.com/notqaltx/Nowadays-Bot#readme",
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.13.0",
