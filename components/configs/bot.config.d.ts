@@ -28,6 +28,7 @@ interface BotConfig {
           secret: string;
           redirectURL: string;
           robloxCacheURL: string;
+          robloxVerificationURL: string;
        };
    };
 }

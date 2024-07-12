@@ -14,7 +14,7 @@ module.exports = async (client, interaction) => {
         const alreadyVerifiedEmbed = new EmbedBuilder()
             .setColor('#0099FF')
             .setTitle("You've already verified your **Roblox** Account!");
-        return await interaction.editReply({ embeds: [alreadyVerifiedEmbed], ephemeral: true });
+        return await interaction.reply({ embeds: [alreadyVerifiedEmbed], ephemeral: true });
      }
      const userEmbed = new EmbedBuilder()
         .setColor('#0099FF')
@@ -33,7 +33,7 @@ module.exports = async (client, interaction) => {
         collector.on('collect', async (msg) => {
             try {
                 const verificationCode = msg.content;
-                const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}/bot/verify`, {
+                const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}bot/verify`, {
                     headers: { 'auth-key': bot.developer.oauth.secret }
                 });
                 if (!Array.isArray(response.data)) {
@@ -75,9 +75,9 @@ module.exports = async (client, interaction) => {
                          } else {
                              if (bot.developer.debug) {
                                 log.warn('Bot does not have permission to change nickname for user:', interaction.user.tag);
-                                await interaction.followUp({ 
-                                   content: 'Verification successful, but I cannot change your nickname due to insufficient permissions.', ephemeral: true 
-                                });
+                                // await interaction.followUp({ 
+                                //    content: 'Verification successful, but I cannot change your nickname due to insufficient permissions.', ephemeral: true 
+                                // });
                              }
                          }
                          if (bot.developer.debug) { log.debug('Verification successful for user:', interaction.user.tag); }
@@ -96,7 +96,7 @@ module.exports = async (client, interaction) => {
                      const invalidCodeEmbed = new EmbedBuilder()
                          .setColor('#FF0000')
                          .setTitle("Invalid verification code. Please try again.");
-                     await interaction.editReply({ embeds: [invalidCodeEmbed], ephemeral: true });
+                     await interaction.followUp({ embeds: [invalidCodeEmbed], ephemeral: true });
                      if (bot.developer.debug) {
                          log.warn('Invalid verification code when verifying:', interaction.user.tag);
                      }

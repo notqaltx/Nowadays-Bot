@@ -9,7 +9,7 @@ const log = new Logger();
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('verify')
-        .setDescription('Verify your LetsBeSocial account!'),
+        .setDescription('Verify your Roblox Account!'),
     async execute(interaction) {
        const verificationChannel = client.channels.cache.get(bot.channels.verificationChannel);
        if (!verificationChannel) { 

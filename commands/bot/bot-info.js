@@ -18,7 +18,7 @@ module.exports = {
             .setColor('#0099FF')
             .setTitle('Bot Information')
             .setThumbnail(client.user.displayAvatarURL({ size: 1024 }))
-            .setDescription(`**LetsBeSocial** is a bot designed for a LBS Official Server. 
+            .setDescription(`**LetsBeSocial** is a bot designed for a Nowadays Studios Official Server. 
                              It currently has over ${client.commands.size} commands!`)
             .addFields(
                 { name: '🤖 Bot Name', value: client.user.username, inline: true },

@@ -1,3 +1,3 @@
-# LetsBeSocial.Bot
-LetsBeSocial. Discord Bot with awesome moderation.
-Created only for the Official LBS Server.
+# Nowadays-Bot
+Nowadays. Discord Bot with awesome verification.
+Created only for the Official Nowadays Studios Server.

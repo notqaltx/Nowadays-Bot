@@ -28,7 +28,7 @@ var config = {
           domain: `localhost:${process.env.PORT}` || `127.0.0.1:${process.env.PORT}`,
           secret: process.env.OAUTH_SECRET,
           redirectURL: process.env.REDIRECT_URL,
-          robloxCacheURL: process.env.CACHE_LINK,
+          robloxCacheURL: process.env.CACHE_URL,
           robloxVerificationURL: process.env.VERIFICATION_URL
        }
    },
