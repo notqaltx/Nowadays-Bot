@@ -59,7 +59,7 @@ module.exports = async (client, interaction) => {
                                const errorVerifyingEmbed = new EmbedBuilder()
                                    .setColor('#FF0000')
                                    .setTitle("Error while verifying your account.")
-                                   .setDescription(`You're not a Nowadays Discord Server member.\n Please rejoin it and try again.`);
+                                   .setDescription(`You're not a Nowadays Discord Server member.\n Please rejpm2 oin it and try again.`);
                                await interaction.followUp({ embeds: [errorVerifyingEmbed], ephemeral: true });
                                log.error('Error while verifying user:', interaction.user.tag);
                                return reject(new Error('User is not a guild member'));
@@ -71,7 +71,7 @@ module.exports = async (client, interaction) => {
                             await interaction.followUp({ embeds: [verifiedEmbed], ephemeral: true });
                          });
                          if (member.manageable) {
-                             await member.setNickname(`${account.display} (@${account.user})`);
+                             await member.setNickname(`${member.displayName} (@${account.Username})`);
                          } else {
                              if (bot.developer.debug) {
                                 log.warn('Bot does not have permission to change nickname for user:', interaction.user.tag);
@@ -80,6 +80,14 @@ module.exports = async (client, interaction) => {
                                 // });
                              }
                          }
+                         await axios.post(`${bot.developer.oauth.robloxCacheURL}api/updateStatus`, {
+                            Username: account.Username, Verified: true
+                         }, {
+                            headers: { 
+                              'Content-Type': 'application/json',
+                              'auth-key': bot.developer.oauth.secret
+                             }
+                         });
                          if (bot.developer.debug) { log.debug('Verification successful for user:', interaction.user.tag); }
                          resolve();
                      } else {
