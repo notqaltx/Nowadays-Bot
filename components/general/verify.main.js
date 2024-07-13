@@ -9,6 +9,7 @@ module.exports = async (client, interaction) => {
      const guild = client.guilds.cache.get(bot.guildId);
      const member = guild.members.cache.get(interaction.user.id);
 
+     const role = guild.roles.cache.find(role => role.name === "Verified Account");
      const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}bot/verify`, {
          headers: { 'auth-key': bot.developer.oauth.secret }
      });
@@ -20,14 +21,19 @@ module.exports = async (client, interaction) => {
         });
         return reject(new Error('API response is not an array'));
      }
-     const account = response.data.find(acc => acc.Verified === true);
-     if (account) {
+     const isVerified = response.data.find(acc => acc.Verified === true);
+     if (isVerified) {
+        if (role) {
+           await member.roles.add(role);
+        }
+        if (member.manageable) {
+            await member.setNickname(`${member.displayName} (@${isVerified.Username})`);
+        } else { if (bot.developer.debug) {log.warn('Bot does not have permission to change nickname for user:', interaction.user.tag);} }
         const alreadyVerifiedEmbed = new EmbedBuilder()
             .setColor('#0099FF')
             .setTitle("You've already verified your **Roblox** Account!");
         return await interaction.reply({ embeds: [alreadyVerifiedEmbed], ephemeral: true });
      }
-     const role = guild.roles.cache.find(role => role.name === "Verified Account");
      if (role && member.roles.cache.has(role.id)) {
         const alreadyVerifiedEmbed = new EmbedBuilder()
             .setColor('#0099FF')
