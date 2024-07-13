@@ -9,6 +9,24 @@ module.exports = async (client, interaction) => {
      const guild = client.guilds.cache.get(bot.guildId);
      const member = guild.members.cache.get(interaction.user.id);
 
+     const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}bot/verify`, {
+         headers: { 'auth-key': bot.developer.oauth.secret }
+     });
+     if (!Array.isArray(response.data)) {
+        log.error('API response is not an array:', response.data);
+        await interaction.followUp({ 
+            content: 'An error occurred during verification. Please try again later.', 
+            ephemeral: true 
+        });
+        return reject(new Error('API response is not an array'));
+     }
+     const account = response.data.find(acc => acc.Verified === true);
+     if (account) {
+        const alreadyVerifiedEmbed = new EmbedBuilder()
+            .setColor('#0099FF')
+            .setTitle("You've already verified your **Roblox** Account!");
+        return await interaction.reply({ embeds: [alreadyVerifiedEmbed], ephemeral: true });
+     }
      const role = guild.roles.cache.find(role => role.name === "Verified Account");
      if (role && member.roles.cache.has(role.id)) {
         const alreadyVerifiedEmbed = new EmbedBuilder()
@@ -124,7 +142,6 @@ module.exports = async (client, interaction) => {
                 collector.stop();
             }
         });
-
         collector.on('end', async (collected, reason) => {
             if (reason === 'time') {
                const timeoutEmbed = new EmbedBuilder()
