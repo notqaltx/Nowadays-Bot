@@ -5,9 +5,10 @@ var config = {
    clientId: process.env.CLIENT_ID,
    clientSecret: process.env.CLIENT_SECRET,
 
-   channels: {
+   server: {
        reportsChannel: process.env.REPORTS_CHANNEL_ID,
-       verificationChannel: process.env.VERIFICATION_CHANNEL_ID
+       verificationChannel: process.env.VERIFICATION_CHANNEL_ID,
+       roleId: process.env.ROLE_ID
    },
    moderation: {
        messageLimit: 5,

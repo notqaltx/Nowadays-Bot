@@ -39,7 +39,7 @@ module.exports = (client, log, bot) => {
                        )
                        .setTimestamp();
 
-                   const reportChannel = client.channels.cache.get(bot.moderation.reportsChannel);
+                   const reportChannel = client.channels.cache.get(bot.server.reportsChannel);
                    if (reportChannel) {
                        reportChannel.send({ embeds: [reportMessageEmbed] });
                    }

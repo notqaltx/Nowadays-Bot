@@ -9,7 +9,7 @@ module.exports = async (client, interaction, username) => {
      const guild = client.guilds.cache.get(bot.guildId);
      const member = guild.members.cache.get(interaction.user.id);
 
-     const role = guild.roles.cache.find(role => role.name === "Verified Account");
+     const role = guild.roles.cache.find(role => role.id === bot.server.roleId);
      try {
          const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}bot/verify`, {
              headers: { 'auth-key': bot.developer.oauth.secret }
@@ -58,11 +58,11 @@ module.exports = async (client, interaction, username) => {
         .addFields(
             { name: 'Step 1:', value: `Join the **[Game Verification Page](${bot.developer.oauth.robloxVerificationURL})** on Roblox.\
             \n :warning: Make sure to **not touch anything** when you clicked the link!` },
-            { name: 'Step 2:', value: `Copy the **Verification Code** and send it in the <#${bot.channels.verificationChannel}> channel.` }
+            { name: 'Step 2:', value: `Copy the **Verification Code** and send it in the <#${bot.server.verificationChannel}> channel.` }
         );
     await interaction.reply({ embeds: [userEmbed], ephemeral: true });
 
-    const filter = m => m.author.id === interaction.user.id && m.channel.id === bot.channels.verificationChannel; 
+    const filter = m => m.author.id === interaction.user.id && m.channel.id === bot.server.verificationChannel; 
     const verificationPromise = new Promise(async (resolve, reject) => {
         const collector = interaction.channel.createMessageCollector({ filter, time: 180000, max: 1 });
         collector.on('collect', async (msg) => {

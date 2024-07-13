@@ -4,9 +4,10 @@ interface BotConfig {
    clientId: string;
    clientSecret: string;
 
-   channels: {
+   server: {
        reportsChannel: string;
        verificationChannel: string;
+       roleId: number;
    };
    moderation: {
        messageLimit: number;

@@ -28,7 +28,7 @@ module.exports = {
                     { name: 'Reason', value: reason, inline: true },
                     { name: 'Time', value: new Date().toLocaleString() }
             );
-            const reportChannel = interaction.guild.channels.cache.get(bot.channels.reportsChannel);
+            const reportChannel = interaction.guild.channels.cache.get(bot.server.reportsChannel);
             if (reportChannel) {
                 await reportChannel.send({ embeds: [reportEmbed] });
             } else {

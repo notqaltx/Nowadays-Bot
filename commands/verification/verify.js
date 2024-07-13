@@ -15,11 +15,11 @@ module.exports = {
                  .setDescription('Your Roblox Username (not DisplayName!)')
                  .setRequired(true)),
     async execute(interaction) {
-       const verificationChannel = client.channels.cache.get(bot.channels.verificationChannel);
+       const verificationChannel = client.channels.cache.get(bot.server.verificationChannel);
        if (!verificationChannel) { 
           return interaction.reply({ content: 'Verification channel not found. Please contact an administrator.', ephemeral: true }); 
        }
-       if (interaction.channel.id !== bot.channels.verificationChannel) {
+       if (interaction.channel.id !== bot.server.verificationChannel) {
            if (bot.developer.debug) { log.debug(`${interaction.user.tag} sended a /verify command not into the #verify channel.`); }
            return interaction.reply({ 
                content: `Please use this command in the ${verificationChannel} channel.`, 
