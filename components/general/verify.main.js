@@ -5,34 +5,45 @@ const bot = require('../../components/configs/bot.config');
 const Logger = require('../../components/utils/log.util');
 const log = new Logger();
 
-module.exports = async (client, interaction) => {
+module.exports = async (client, interaction, username) => {
      const guild = client.guilds.cache.get(bot.guildId);
      const member = guild.members.cache.get(interaction.user.id);
 
      const role = guild.roles.cache.find(role => role.name === "Verified Account");
-     const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}bot/verify`, {
-         headers: { 'auth-key': bot.developer.oauth.secret }
-     });
-     if (!Array.isArray(response.data)) {
-        log.error('API response is not an array:', response.data);
-        await interaction.followUp({ 
-            content: 'An error occurred during verification. Please try again later.', 
-            ephemeral: true 
-        });
-        return reject(new Error('API response is not an array'));
-     }
-     const isVerified = response.data.find(acc => acc.Verified === true);
-     if (isVerified) {
-        if (role) {
-           await member.roles.add(role);
-        }
-        if (member.manageable) {
-            await member.setNickname(`${member.displayName} (@${isVerified.Username})`);
-        } else { if (bot.developer.debug) {log.warn('Bot does not have permission to change nickname for user:', interaction.user.tag);} }
-        const alreadyVerifiedEmbed = new EmbedBuilder()
-            .setColor('#0099FF')
-            .setTitle("You've already verified your **Roblox** Account!");
-        return await interaction.reply({ embeds: [alreadyVerifiedEmbed], ephemeral: true });
+     try {
+         const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}bot/verify`, {
+             headers: { 'auth-key': bot.developer.oauth.secret }
+         });
+         if (!Array.isArray(response.data)) {
+             log.error('API response is not an array:', response.data);
+             await interaction.followUp({ 
+                 content: 'An error occurred during verification. Please try again later.', 
+                 ephemeral: true 
+             });
+             return;
+         }
+         const account = response.data.find(acc => acc.Username === username && acc.Verified === true);
+         if (account) {
+             if (role) { await member.roles.add(role); }
+             if (member.manageable) {
+                 await member.setNickname(`${member.displayName} (@${account.Username})`);
+             } else {
+                 if (bot.developer.debug) {
+                     log.warn('Bot does not have permission to change nickname for user:', interaction.user.tag);
+                 }
+             }
+             const alreadyVerifiedEmbed = new EmbedBuilder()
+                 .setColor('#0099FF')
+                 .setTitle("You've already verified your **Roblox** Account!");
+             return await interaction.reply({ embeds: [alreadyVerifiedEmbed], ephemeral: true });
+         }
+     } catch (error) {
+         log.error('Error checking verification status:', error);
+         await interaction.followUp({ 
+             content: 'An error occurred during verification. Please try again later.', 
+             ephemeral: true 
+         });
+         return;
      }
      if (role && member.roles.cache.has(role.id)) {
         const alreadyVerifiedEmbed = new EmbedBuilder()
@@ -99,9 +110,6 @@ module.exports = async (client, interaction) => {
                          } else {
                              if (bot.developer.debug) {
                                 log.warn('Bot does not have permission to change nickname for user:', interaction.user.tag);
-                                // await interaction.followUp({ 
-                                //    content: 'Verification successful, but I cannot change your nickname due to insufficient permissions.', ephemeral: true 
-                                // });
                              }
                          }
                          await axios.post(`${bot.developer.oauth.robloxCacheURL}api/updateStatus`, {

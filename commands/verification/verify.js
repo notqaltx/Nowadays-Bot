@@ -9,7 +9,11 @@ const log = new Logger();
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('verify')
-        .setDescription('Verify your Roblox Account!'),
+        .setDescription('Verify your Roblox Account!')
+        .addStringOption(option => 
+             option.setName('username')
+                 .setDescription('Your Roblox Username (not DisplayName!)')
+                 .setRequired(true)),
     async execute(interaction) {
        const verificationChannel = client.channels.cache.get(bot.channels.verificationChannel);
        if (!verificationChannel) { 
@@ -22,7 +26,8 @@ module.exports = {
                ephemeral: true 
            });
        }
+       const username = interaction.options.getString('username');
        const verificationComponent = require('../../components/general/verify.main'); 
-       verificationComponent(client, interaction);
+       verificationComponent(client, interaction, username);
     },
 };
