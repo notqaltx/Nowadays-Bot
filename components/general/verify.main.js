@@ -94,7 +94,7 @@ module.exports = async (client, interaction, username) => {
                                const errorVerifyingEmbed = new EmbedBuilder()
                                    .setColor('#FF0000')
                                    .setTitle("Error while verifying your account.")
-                                   .setDescription(`You're not a Nowadays Discord Server member.\n Please rejpm2 oin it and try again.`);
+                                   .setDescription(`You're not a Nowadays Discord Server member.\n Please rejoin it and try again.`);
                                await interaction.followUp({ embeds: [errorVerifyingEmbed], ephemeral: true });
                                log.error('Error while verifying user:', interaction.user.tag);
                                return reject(new Error('User is not a guild member'));
