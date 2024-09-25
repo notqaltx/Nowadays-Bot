@@ -29,7 +29,7 @@
     "discord.js": "^14.15.2",
     "moment": "^2.30.1",
     "moment-duration-format": "^2.3.2",
-    "pm2": "^5.4.0",
+    "pm2": "^5.4.2",
     "undici": "^6.19.2"
   },
   "homepage": "https://github.com/notqaltx/Nowadays-Bot#readme",

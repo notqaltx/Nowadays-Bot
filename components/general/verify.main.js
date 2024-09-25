@@ -1,182 +1,118 @@
-const axios = require("axios");
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const axios = require('axios');
 
 const bot = require('../../components/configs/bot.config');
 const Logger = require('../../components/utils/log.util');
 const log = new Logger();
 
-module.exports = async (client, interaction, username) => {
-     const guild = client.guilds.cache.get(bot.guildId);
-     const member = guild.members.cache.get(interaction.user.id);
+module.exports = async (client) => {
+  try {
+    const verificationChannel = client.channels.cache.get(bot.server.verificationChannel);
+    if (!verificationChannel) {
+      log.error('Verification channel not found. Please check the channel ID in your configuration.');
+      return;
+    }
+    const verifyEmbed = new EmbedBuilder()
+      .setColor('#0099FF')
+      .setTitle("Nowadays Account Verification")
+        .setDescription(`Welcome to the **Account Verification**.\n To verify your Roblox Account you should do these steps:`)
+        .addFields(
+            { name: 'Step 1:', value: 'Click on the `🟦 Start Verifying` Button below, to follow the **link**.\n\
+                After when you\'re opened Verification Page, follow the **instructions**.' },
+            { name: 'Step 2:', value: 'When you\'re done with the Verifying on the Verification Page.\n\
+                Click on the `✅ Verify` Button, to **finish** your verification.' }
+        );
+    const verifyButton = new ButtonBuilder()
+      .setLabel('🟦 Start Verifying')
+      .setURL("https://nowadays.glitch.me/")
+      .setStyle(ButtonStyle.Link);
 
-     const role = guild.roles.cache.find(role => role.id === bot.server.roleId);
-     try {
-         const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}bot/verify`, {
-             headers: { 'auth-key': bot.developer.oauth.secret }
-         });
-         if (!Array.isArray(response.data)) {
-             log.error('API response is not an array:', response.data);
-             await interaction.followUp({ 
-                 content: 'An error occurred during verification. Please try again later.', 
-                 ephemeral: true 
-             });
-             return;
-         }
-         const account = response.data.find(acc => acc.Username === username && acc.Verified === true);
-         if (account) {
-             if (role) { await member.roles.add(role); }
-             if (member.manageable) {
-                 await member.setNickname(`${member.displayName} (@${account.Username})`);
-             } else {
-                 if (bot.developer.debug) {
-                     log.warn('Bot does not have permission to change nickname for user:', interaction.user.tag);
-                 }
-             }
-             const alreadyVerifiedEmbed = new EmbedBuilder()
-                 .setColor('#0099FF')
-                 .setTitle("You've already verified your **Roblox** Account!");
-             return await interaction.reply({ embeds: [alreadyVerifiedEmbed], ephemeral: true });
-         }
-     } catch (error) {
-         log.error('Error checking verification status:', error);
-         await interaction.followUp({ 
-             content: 'An error occurred during verification. Please try again later.', 
-             ephemeral: true 
-         });
-         return;
-     }
-     if (role && member.roles.cache.has(role.id)) {
+    const checkButton = new ButtonBuilder()
+      .setCustomId('check_verification')
+      .setLabel('✅ Verify')
+      .setStyle(ButtonStyle.Success);
+
+    const row = new ActionRowBuilder().addComponents(verifyButton, checkButton);
+    const messages = await verificationChannel.messages.fetch({ limit: 100 });
+    const existingMessage = messages.find(
+      (msg) => msg.author.id === client.user.id && msg.embeds[0]?.title === 'Account Verification'
+    );
+    if (!existingMessage) {
+      await verificationChannel.send({ embeds: [verifyEmbed], components: [row] });
+      log.info('Verification embed sent.');
+    } else {
+      log.info('Verification embed already exists.');
+    }
+  } catch (error) {
+    log.error('Error sending verification embed:', error);
+  }
+  client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isButton()) return;
+    const { customId, user } = interaction;
+    if (customId === 'check_verification') {
+      const guild = client.guilds.cache.get(bot.guildId);
+      const member = guild.members.cache.get(user.id);
+
+      const role = guild.roles.cache.find(role => role.id === bot.server.roleId);
+      if (role && member.roles.cache.has(role.id)) {
         const alreadyVerifiedEmbed = new EmbedBuilder()
             .setColor('#0099FF')
-            .setTitle("You've already verified your **Roblox** Account!");
+            .setTitle("You've already verified your **Roblox Account**!");
         return await interaction.reply({ embeds: [alreadyVerifiedEmbed], ephemeral: true });
-     }
-     const userEmbed = new EmbedBuilder()
-        .setColor('#0099FF')
-        .setTitle("Verifying your Roblox Account.")
-        .setDescription(`Hello, **${interaction.user.tag}**.\n To verify your account you should do these steps:`)
-        .addFields(
-            { name: 'Step 1:', value: `Join the **[Game Verification Page](${bot.developer.oauth.robloxVerificationURL})** on Roblox.\
-            \n :warning: Make sure to **not touch anything** when you clicked the link!` },
-            { name: 'Step 2:', value: `Copy the **Verification Code** and send it in the <#${bot.server.verificationChannel}> channel.` }
+      }
+      await interaction.deferReply({ ephemeral: true });
+      try {
+        const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}bot/verify`, {
+          headers: { 
+            'auth-key': bot.developer.oauth.secret,
+            'verification-type': "site"
+          }
+        });
+        if (!Array.isArray(response.data)) {
+            log.error('API response is not an array:', response.data);
+            await interaction.followUp({ 
+                content: 'An error occurred during verification. Please try again later.', 
+                ephemeral: true 
+            });
+            return;
+        }
+        const account = response.data.find(
+            (acc) => acc.Discord === user.tag
+            && acc.Verified === true
         );
-    await interaction.reply({ embeds: [userEmbed], ephemeral: true });
-
-    const filter = m => m.author.id === interaction.user.id && m.channel.id === bot.server.verificationChannel; 
-    const verificationPromise = new Promise(async (resolve, reject) => {
-        const collector = interaction.channel.createMessageCollector({ filter, time: 180000, max: 1 });
-        collector.on('collect', async (msg) => {
-            try {
-                const verificationCode = msg.content;
-                const response = await axios.get(`${bot.developer.oauth.robloxCacheURL}bot/verify`, {
-                    headers: { 'auth-key': bot.developer.oauth.secret }
-                });
-                if (!Array.isArray(response.data)) {
-                   log.error('API response is not an array:', response.data);
-                   await interaction.followUp({ 
-                       content: 'An error occurred during verification. Please try again later.', 
-                       ephemeral: true 
-                   });
-                   return reject(new Error('API response is not an array'));
-                }
-                const account = response.data.find(acc => acc.Code === verificationCode);
-                if (account) {
-                     if (role) {
-                         await msg.delete()
-                         await member.roles.add(role);
-
-                         const infoEmbed = new EmbedBuilder()
-                             .setColor('#38D65D')
-                             .setTitle("Verifying...")
-                             .setDescription(`This might take a **few seconds** to verify.`);
-                         await interaction.editReply({ embeds: [infoEmbed], ephemeral: true }).then(async message => {
-                            if (!member) {
-                               const errorVerifyingEmbed = new EmbedBuilder()
-                                   .setColor('#FF0000')
-                                   .setTitle("Error while verifying your account.")
-                                   .setDescription(`You're not a Nowadays Discord Server member.\n Please rejoin it and try again.`);
-                               await interaction.followUp({ embeds: [errorVerifyingEmbed], ephemeral: true });
-                               log.error('Error while verifying user:', interaction.user.tag);
-                               return reject(new Error('User is not a guild member'));
-                            }
-                            const verifiedEmbed = new EmbedBuilder()
-                                .setColor('#16FA4C')
-                                .setTitle("Successfully verified your Roblox Account!")
-                                .setDescription(`You've been successfully verified. Congrats!`);
-                            await interaction.followUp({ embeds: [verifiedEmbed], ephemeral: true });
-                         });
-                         if (member.manageable) {
-                             await member.setNickname(`${member.displayName} (@${account.Username})`);
-                         } else {
-                             if (bot.developer.debug) {
-                                log.warn('Bot does not have permission to change nickname for user:', interaction.user.tag);
-                             }
-                         }
-                         await axios.post(`${bot.developer.oauth.robloxCacheURL}api/updateStatus`, {
-                            Username: account.Username, Verified: true
-                         }, {
-                            headers: { 
-                              'Content-Type': 'application/json',
-                              'auth-key': bot.developer.oauth.secret
-                             }
-                         });
-                         if (bot.developer.debug) { log.debug('Verification successful for user:', interaction.user.tag); }
-                         resolve();
-                     } else {
-                         await msg.delete();
-                         if (bot.developer.debug) {
-                            log.warn('Verified Account role not found.');
-                            await interaction.editReply({ 
-                               content: 'Verification successful, but the Verified Account role was not found.' , ephemeral: true
-                            });
-                         }
-                     }
-                } else {
-                     await msg.delete();
-                     const invalidCodeEmbed = new EmbedBuilder()
-                         .setColor('#FF0000')
-                         .setTitle("Invalid verification code. Please try again.");
-                     await interaction.followUp({ embeds: [invalidCodeEmbed], ephemeral: true });
-                     if (bot.developer.debug) {
-                         log.warn('Invalid verification code when verifying:', interaction.user.tag);
-                     }
-                     reject();
-                }
-            } catch (error) {
-                await msg.delete();
-                if (bot.developer.debug) {
-                   log.error('Error during verification:', error);
-                }
-                const error1Embed = new EmbedBuilder()
-                    .setColor('#FF0000')
-                    .setTitle("An error occurred during verification. Please try again later.");
-                await interaction.editReply({ embeds: [error1Embed], ephemeral: true });
-                reject(error);
-            } finally {
-                collector.stop();
+        if (account) {
+          if (role && member) {
+            await member.roles.add(role);
+            if (member.manageable) {
+              await member.setNickname(`${member.displayName} (@${account.Roblox})`);
             }
-        });
-        collector.on('end', async (collected, reason) => {
-            if (reason === 'time') {
-               const timeoutEmbed = new EmbedBuilder()
-                   .setColor('#FF0000')
-                   .setTitle("Verification Timed Out")
-                   .setDescription(`You didn't provide the verification code in time. Please try again.`);
-               await interaction.editReply({ embeds: [timeoutEmbed], ephemeral: true });
-               if (bot.developer.debug) {
-                   log.warn('Verification Timed Out for user:', interaction.user.tag);
-               }
-               reject();
-            }
-        });
-    });
-    try {
-        await verificationPromise;
-    } catch (error) {
-        log.error('Error:', error);
-        // const error2Embed = new EmbedBuilder()
-        //     .setColor('#FF0000')
-        //     .setTitle("A fatal error occurred during verification. Please try again later.");
-        // await interaction.followUp({ embeds: [error2Embed], ephemeral: true });
+            const successEmbed = new EmbedBuilder()
+              .setColor('#16FA4C')
+              .setTitle('Verification Successful!')
+              .setDescription('Your account has been successfully **verified**!\n\
+                And you have been **granted access** to the channels.');
+            await interaction.editReply({ embeds: [successEmbed], components: [] });
+          } else {
+            await interaction.editReply({
+              content: 'Could not assign the verified role. Please contact an administrator.',
+              components: [],
+            });
+          }
+        } else {
+          const notVerifiedEmbed = new EmbedBuilder()
+            .setColor('#FF0000')
+            .setTitle('Not Verified')
+            .setDescription('Your account is not verified yet.\n Please complete the **verification** process.');
+          await interaction.editReply({ embeds: [notVerifiedEmbed] });
+        }
+      } catch (error) {
+        log.error('Error checking verification status:', error);
+        const errorEmbed = new EmbedBuilder()
+          .setColor('#FF0000')
+          .setTitle('Error')
+          .setDescription('An error occurred while checking your **verification status**. Please try again later.');
+        await interaction.editReply({ embeds: [errorEmbed], components: [] });
+      }
     }
+  });
 };
