@@ -24,7 +24,7 @@ module.exports = async (client) => {
         );
     const verifyButton = new ButtonBuilder()
       .setLabel('🟦 Start Verifying')
-      .setURL("https://nowadays.glitch.me/")
+      .setURL("https://nowadays.glitch.me/verification")
       .setStyle(ButtonStyle.Link);
 
     const checkButton = new ButtonBuilder()
