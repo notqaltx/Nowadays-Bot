@@ -62,18 +62,18 @@ module.exports = {
                     if (role && member) {
                         await member.roles.add(role);
                         if (member.manageable) {
-                        await member.setNickname(`${member.displayName} (@${account.Roblox})`);
+                            await member.setNickname(`${member.displayName} (@${account.Roblox})`);
                         }
                         const successEmbed = new EmbedBuilder()
-                        .setColor('#16FA4C')
-                        .setTitle('Verification Successful!')
-                        .setDescription('Your account has been successfully **verified**!\n\
-                            And you have been **granted access** to the channels.');
+                            .setColor('#16FA4C')
+                            .setTitle('Verification Successful!')
+                            .setDescription('Your account has been successfully **verified**!\n\
+                                And you have been **granted access** to the channels.');
                         await interaction.editReply({ embeds: [successEmbed], components: [] });
                     } else {
                         await interaction.editReply({
-                        content: 'Could not assign the verified role. Please contact an administrator.',
-                        components: [],
+                            content: 'Could not assign the verified role. Please contact an administrator.',
+                            components: [],
                         });
                     }
                     } else {
@@ -86,9 +86,9 @@ module.exports = {
                 } catch (error) {
                     log.error('Error checking verification status:', error);
                     const errorEmbed = new EmbedBuilder()
-                    .setColor('#FF0000')
-                    .setTitle('Error')
-                    .setDescription('An error occurred while checking your **verification status**. Please try again later.');
+                        .setColor('#FF0000')
+                        .setTitle('Error')
+                        .setDescription('An error occurred while checking your **verification status**. Please try again later.');
                     await interaction.editReply({ embeds: [errorEmbed], components: [] });
                 }
             }
